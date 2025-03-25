@@ -4,7 +4,7 @@ export function createToolDefinitions() {
   return [
     {
       name: "playwright_navigate",
-      description: "Navigate to a URL",
+      description: "Navigate to a URL and optionally set cookies for the browser session",
       inputSchema: {
         type: "object",
         properties: {
