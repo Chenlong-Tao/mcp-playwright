@@ -71,6 +71,16 @@ interface BrowserSettings {
   userAgent?: string;
   headless?: boolean;
   browserType?: 'chromium' | 'firefox' | 'webkit';
+  cookie?: {
+    name: string;
+    value: string;
+    domain: string;
+    path?: string;
+    expires?: number;
+    httpOnly?: boolean;
+    secure?: boolean;
+    sameSite?: 'Strict' | 'Lax' | 'None';
+  };
 }
 
 /**
@@ -92,7 +102,7 @@ async function ensureBrowser(browserSettings?: BrowserSettings) {
 
     // Launch new browser if needed
     if (!browser) {
-      const { viewport, userAgent, headless = false, browserType = 'chromium' } = browserSettings ?? {};
+      const { viewport, userAgent, headless = false, browserType = 'chromium', cookie } = browserSettings ?? {};
       
       // If browser type is changing, force a new browser instance
       if (browser && currentBrowserType !== browserType) {
@@ -140,6 +150,22 @@ async function ensureBrowser(browserSettings?: BrowserSettings) {
         deviceScaleFactor: 1,
       });
 
+      // 添加cookie如果存在
+      if (cookie) {
+        await context.addCookies([
+          {
+            name: cookie.name,
+            value: cookie.value,
+            domain: cookie.domain,
+            path: cookie.path || '/',
+            expires: cookie.expires,
+            httpOnly: cookie.httpOnly,
+            secure: cookie.secure,
+            sameSite: cookie.sameSite,
+          }
+        ]);
+      }
+
       page = await context.newPage();
 
       // Register console message handler
@@ -180,7 +206,7 @@ async function ensureBrowser(browserSettings?: BrowserSettings) {
     resetBrowserState();
     
     // Try one more time from scratch
-    const { viewport, userAgent, headless = false, browserType = 'chromium' } = browserSettings ?? {};
+    const { viewport, userAgent, headless = false, browserType = 'chromium', cookie } = browserSettings ?? {};
     
     // Use the appropriate browser engine
     let browserInstance;
@@ -214,6 +240,22 @@ async function ensureBrowser(browserSettings?: BrowserSettings) {
       },
       deviceScaleFactor: 1,
     });
+
+    // 添加cookie如果存在
+    if (cookie) {
+      await context.addCookies([
+        {
+          name: cookie.name,
+          value: cookie.value,
+          domain: cookie.domain,
+          path: cookie.path || '/',
+          expires: cookie.expires,
+          httpOnly: cookie.httpOnly,
+          secure: cookie.secure,
+          sameSite: cookie.sameSite,
+        }
+      ]);
+    }
 
     page = await context.newPage();
     
@@ -328,7 +370,8 @@ export async function handleToolCall(
       },
       userAgent: name === "playwright_custom_user_agent" ? args.userAgent : undefined,
       headless: args.headless,
-      browserType: args.browserType || 'chromium'
+      browserType: args.browserType || 'chromium',
+      cookie: args.cookie
     };
     
     try {

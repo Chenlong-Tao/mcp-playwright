@@ -14,7 +14,22 @@ export function createToolDefinitions() {
           height: { type: "number", description: "Viewport height in pixels (default: 720)" },
           timeout: { type: "number", description: "Navigation timeout in milliseconds" },
           waitUntil: { type: "string", description: "Navigation wait condition" },
-          headless: { type: "boolean", description: "Run browser in headless mode (default: false)" }
+          headless: { type: "boolean", description: "Run browser in headless mode (default: false)" },
+          cookie: { 
+            type: "object", 
+            description: "Cookie to set for all requests. Should contain name, value, and domain.", 
+            properties: {
+              name: { type: "string", description: "Cookie name" },
+              value: { type: "string", description: "Cookie value" },
+              domain: { type: "string", description: "Cookie domain (required)" },
+              path: { type: "string", description: "Cookie path (optional, defaults to '/')" },
+              expires: { type: "number", description: "Cookie expiration time in seconds since Unix epoch (optional)" },
+              httpOnly: { type: "boolean", description: "Whether the cookie is HTTP-only (optional)" },
+              secure: { type: "boolean", description: "Whether the cookie is secure (optional)" },
+              sameSite: { type: "string", description: "Cookie same-site attribute (optional)", enum: ["Strict", "Lax", "None"] }
+            },
+            required: ["name", "value", "domain"]
+          }
         },
         required: ["url"],
       },

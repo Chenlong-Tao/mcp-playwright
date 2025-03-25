@@ -48,6 +48,17 @@ Navigate to a URL in the browser with configurable viewport and browser settings
 - **`headless`** *(boolean, optional, default: false)*:  
   Run browser in headless mode.
 
+- **`cookie`** *(object, optional)*:  
+  Cookie to set for all requests. Contains:
+  - **`name`** *(string, required)*: Cookie name
+  - **`value`** *(string, required)*: Cookie value
+  - **`domain`** *(string, required)*: Cookie domain
+  - **`path`** *(string, optional, default: "/")*: Cookie path
+  - **`expires`** *(number, optional)*: Unix time in seconds
+  - **`httpOnly`** *(boolean, optional)*: HTTP-only flag
+  - **`secure`** *(boolean, optional)*: Secure flag
+  - **`sameSite`** *(string, optional)*: "Strict", "Lax" or "None"
+
 ---
 
 ### Playwright_screenshot

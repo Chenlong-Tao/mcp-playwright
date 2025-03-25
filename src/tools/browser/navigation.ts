@@ -28,6 +28,30 @@ export class NavigationTool extends BrowserToolBase {
 
     return this.safeExecute(context, async (page) => {
       try {
+        // 如果提供了cookie参数，确保在导航前设置cookie
+        if (args.cookie) {
+          try {
+            // 确保提供了必需的domain属性
+            if (!args.cookie.domain) {
+              return createErrorResponse("Cookie domain is required. Please provide a domain for the cookie.");
+            }
+            
+            const browserContext = page.context();
+            await browserContext.addCookies([{
+              name: args.cookie.name,
+              value: args.cookie.value,
+              domain: args.cookie.domain,
+              path: args.cookie.path || '/',
+              expires: args.cookie.expires,
+              httpOnly: args.cookie.httpOnly,
+              secure: args.cookie.secure,
+              sameSite: args.cookie.sameSite,
+            }]);
+          } catch (cookieError) {
+            return createErrorResponse(`Failed to set cookie: ${(cookieError as Error).message}`);
+          }
+        }
+
         await page.goto(args.url, {
           timeout: args.timeout || 30000,
           waitUntil: args.waitUntil || "load"
